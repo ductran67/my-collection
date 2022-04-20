@@ -2,8 +2,7 @@ import { Container, Row, Col } from 'react-bootstrap';
 import QuoteForm from '../QuoteForm';
 import TabularForm from '../TabularForm';
 import Button from '../layout/Button';
-const Quote = ({ quotes, addQuote, onSelectedDelete, onDeleteAll }) => {
-
+const Quote = ({ quotes, getQuotes, onSelectedDelete, onDeleteAll }) => {
   const column = [
     {name: 'checkbox', type: 'checkbox', value: '\u2713'},
     {name: 'quote', type: 'string', value: 'Quote'},
@@ -16,7 +15,7 @@ const Quote = ({ quotes, addQuote, onSelectedDelete, onDeleteAll }) => {
       <Row>
         {/* Quote form area */}
         <Col>
-          <QuoteForm quotes={quotes} addQuote={addQuote} />
+          <QuoteForm quotes={quotes} getQuotes={getQuotes} />
         </Col>
         {/* Quote Tabular form area */}
         <Col xl={7}>
@@ -24,9 +23,10 @@ const Quote = ({ quotes, addQuote, onSelectedDelete, onDeleteAll }) => {
             <>
               <Button text='Delete Selected Items' onClick={onSelectedDelete}/>
               <Button text='Delete All' onClick={onDeleteAll}/>
+              <TabularForm data={quotes} column={column} />
             </>
           ) : ('')}
-          <TabularForm data={quotes} column={column} />
+
         </Col>
       </Row>
     </Container>

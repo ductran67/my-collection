@@ -1,10 +1,11 @@
 import { useEffect} from 'react'
 import QuoteSlide from "./layout/QuoteSlide";
-const Header = ({ data }) => {
+const Header = ({ quotes, getQuotes }) => {
+  // getQuotes();
   // Set default quote
   const quote = 'This is my default quote';
   const citation = 'Default citation'
-  if (data===null || data.length===0) {data=[{quote, citation}]}
+  if (quotes===null || quotes.length===0) {quotes=[{quote, citation}]}
   useEffect(() => {
     const quoteSlideShow = () => {
       // Get the group of quotes
@@ -34,7 +35,7 @@ const Header = ({ data }) => {
 
   return (
     <header className='header'>
-      {data.map((quote, index) => (
+      {quotes.map((quote, index) => (
         <QuoteSlide key={index} quote={quote.quote} citation={quote.citation} />
       ))}
     </header>

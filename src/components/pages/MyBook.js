@@ -1,44 +1,43 @@
 import { useState, useEffect } from 'react'
-import { Container, Row } from 'react-bootstrap';
+import { Container, Row, Alert } from 'react-bootstrap';
 import TabularForm from '../TabularForm';
 import Button from '../layout/Button';
+import bookDataService from '../../services/book.services';
+
 const MyBook = () => {
   const [data, setData] = useState([]);
+  const [message, setMessage] = useState({ error: false, msg: "" });
   const column = [
     {name: 'checkbox', type: 'checkbox', value: '\u2713'},
     {name: 'title', type: 'string', value: 'Title'},
     {name: 'book_image', type: 'image', value: 'Image'},
     {name: 'description', type: 'string', value: 'Description'},
-    {name: 'author', type: 'string', value: 'Author'}
+    {name: 'author', type: 'string', value: 'Author'},
+    {name: 'date', type: 'date', value: 'Collection Date'}
   ];
   // Get data from bookCollection in local storage
   useEffect(() => {
-    const getBooks = () => {
-      // Get my favorite quotes from local storage
-      const myLocalStorage = JSON.parse(localStorage.getItem("myBookCollection"));
-      // If the local storage has data
-      if (myLocalStorage) {
-        // Store data in book array
-        setData(myLocalStorage);
-      }
-    }
     getBooks();
   }, []);
+  // Get all books from bookTb
+  const getBooks = async () => {
+    const books = await bookDataService.getAllBooks();
+    setData(books.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+  }
 
-  const DeleteSelectedBooks = () => {
+  const DeleteSelectedBooks = async () => {
     // Get all checkbox elements
     const bookCheckBox = document.getElementsByName("checkbox");
     // Get all selected books
     const checked = data.filter((book, index) => bookCheckBox[index].checked);
     if (checked.length === 0) {
-      alert('Please select any books that you want to delete!');
+      setMessage({ error: true, msg: 'Please select any books that you want to delete!' });
+      // alert('Please select any books that you want to delete!');
     } else {
-      // Add all unchecked books to a new array 
-      const newBookArray = data.filter((book, index) => !bookCheckBox[index].checked)
-      // Store this new quote array to my local storage
-      localStorage.setItem("myBookCollection",JSON.stringify(newBookArray));
-      // Set data with new book collection
-      setData(newBookArray);
+      // Scan through the selected books
+      checked.map(async(book) => ({...await bookDataService.deleteBook(book.id), id: book.id}));
+      // Call the function to get all books from bookTb
+      await getBooks();
       // Reset all checked checkboxes
       for (let checkbox of bookCheckBox) {checkbox.checked=false;}
     }
@@ -47,12 +46,13 @@ const MyBook = () => {
   const DeleteAllBooks = () => {
     if (data.length > 0) {
       if (window.confirm('Are you sure to delete all your favorite books?')) {
-        // Remove item "myBookCollection" from localStorage
-        localStorage.removeItem("myBookCollection");
+        data.map(async(book) => ({...await bookDataService.deleteBook(book.id), id: book.id}));
+        // Empty data array
         setData([]);
       }
     } else {
-      alert('There is nothing to delete.');
+      setMessage({ error: false, msg: 'There is nothing to delete!' });
+      // alert('There is nothing to delete.');
     }
   }
 
@@ -61,7 +61,15 @@ const MyBook = () => {
       <Row>
         {/* Book Tabular form area */}
         {data.length > 0 ? (
-          <div>
+          <div className="p-4 box">
+            {message?.msg && (
+              <Alert
+                variant={message?.error ? "danger" : "success"}
+                dismissible
+                onClose={() => setMessage("")}>
+                {message?.msg}
+              </Alert>
+            )}
             <Button text='Delete Selected Books' onClick={DeleteSelectedBooks}/>
             <Button text='Delete All Books' onClick={DeleteAllBooks}/>
           </div>

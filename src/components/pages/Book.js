@@ -1,11 +1,13 @@
 import { useState } from 'react'
-import { Container, Row, Col } from 'react-bootstrap';
+import { Container, Row, Col, Alert } from 'react-bootstrap';
 import BookForm from '../BookForm';
 import TabularForm from '../TabularForm';
 import Button from '../layout/Button';
+import bookDataService from '../../services/book.services';
 
 const Book = () => {
   const [data, setData] = useState([]);
+  const [message, setMessage] = useState({ error: false, msg: "" });
   const column = [
     {name: 'checkbox', type: 'checkbox', value: '\u2713'},
     {name: 'title', type: 'string', value: 'Title'},
@@ -21,37 +23,31 @@ const Book = () => {
     setData(books.results.books);
   }
 
-  const onSelect = () => {
+  const onSelect = async () => {
+    setMessage('');
     // Get all checkbox elements
     const bookCheckBox = document.getElementsByName('checkbox');
     // Filter selected items from data
     const selectedBooks = data.filter((book, index) => bookCheckBox[index].checked);
     if (selectedBooks.length === 0) {
-      alert('Please select your favorite books.');
+      setMessage({ error: true, msg: "Please select your favorite books." });
+      // alert('Please select your favorite books.');
     } else {
-      let bookArray=[];
-      // Get books from the local storage
-      const myBookCollection = JSON.parse(localStorage.getItem("myBookCollection"));
+      selectedBooks.forEach(async (book) => {
+        // Get book's info
+        const { title, author, book_image, description } = book;
+        // check if this book already exists in bookTb or not
+        const data = await bookDataService.findBook(title, author);
+        if (data.length ===0) {
+          // console.log('add new book.')
+          const date = new Date().toLocaleString();
+          await bookDataService.addBook({title, author, book_image, description, date});
+        }
+      });
 
-      if (myBookCollection) {
-        bookArray = myBookCollection;
-      }
-      // Check if the selected books already exist in book array
-      if (bookArray.length > 0) {
-        // Get books titles from bookArray
-        const existTitles = bookArray.map((book) => book.title);
-        // Filter the new books
-        const newBooks= selectedBooks.filter((book) => !existTitles.includes(book.title));
-        // Add to new books to book array
-        bookArray.push(...newBooks);
-      } else {
-        // Get all selected books
-        bookArray = selectedBooks;
-      }
-      // Store the books array to my local storage 'myBookCollection'
-      localStorage.setItem("myBookCollection",JSON.stringify(bookArray));
       // Message alert when done.
-      alert('The task has been done!'); 
+      setMessage({ error: false, msg: "The task has been done!" });
+      // alert('The task has been done!'); 
 
       // Reset all checkboxes of the checkbox list in book table
       for (let checkbox of bookCheckBox) {checkbox.checked = false;}
@@ -69,6 +65,14 @@ const Book = () => {
         <Col xl={10}>
           {data.length > 0 ? (
             <div>
+              {message?.msg && (
+                <Alert
+                  variant={message?.error ? "danger" : "success"}
+                  dismissible
+                  onClose={() => setMessage("")}>
+                  {message?.msg}
+                </Alert>
+              )}
               <Button text='Select Books' onClick={onSelect}/>
             </div>
           ) : ('')}
