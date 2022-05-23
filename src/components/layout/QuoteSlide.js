@@ -1,4 +1,5 @@
-// import { quote, animated, fadeInDown, content, citation } from './QuoteSlide.module.css';
+import PropTypes from 'prop-types';
+
 const QuoteSlide = ({ quote, citation }) => {
   return (
     <div className='quote animated fadeInDown'>
@@ -6,6 +7,11 @@ const QuoteSlide = ({ quote, citation }) => {
       <p className='citation'>{citation}</p>
     </div>
   )
-}
+};
+
+QuoteSlide.propTypes = {
+  quote: PropTypes.string.isRequired,
+  citation: PropTypes.string.isRequired
+};
 
 export default QuoteSlide

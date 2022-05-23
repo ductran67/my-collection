@@ -1,11 +1,12 @@
 import { useEffect} from 'react'
 import QuoteSlide from "./layout/QuoteSlide";
-const Header = ({ quotes, getQuotes }) => {
-  // getQuotes();
+import PropTypes from 'prop-types';
+
+const Header = ({ quoteCollection }) => {
   // Set default quote
   const quote = 'This is my default quote';
   const citation = 'Default citation'
-  if (quotes===null || quotes.length===0) {quotes=[{quote, citation}]}
+  if (quoteCollection===null || quoteCollection.length===0) {quoteCollection=[{quote, citation}]}
   useEffect(() => {
     const quoteSlideShow = () => {
       // Get the group of quotes
@@ -35,11 +36,15 @@ const Header = ({ quotes, getQuotes }) => {
 
   return (
     <header className='header'>
-      {quotes.map((quote, index) => (
+      {quoteCollection.map((quote, index) => (
         <QuoteSlide key={index} quote={quote.quote} citation={quote.citation} />
       ))}
     </header>
   )
+}
+
+Header.propTypes = {
+  quoteCollection: PropTypes.arrayOf(PropTypes.object).isRequired
 }
 
 export default Header

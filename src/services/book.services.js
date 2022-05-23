@@ -7,9 +7,11 @@ import {
   addDoc,
   deleteDoc,
   doc,
+  orderBy
 } from "firebase/firestore";
 
 const bookCollection = collection(db, "bookTb");
+const q = query(bookCollection, orderBy("date", "desc"));
 
 class bookDataService {
   findBook = async (title, author) => {
@@ -23,7 +25,7 @@ class bookDataService {
     return addDoc(bookCollection, newBook);
   };
   getAllBooks = () => {
-    return getDocs(bookCollection);
+    return getDocs(q);
   };
   deleteBook = (id) => {
     const bookDoc = doc(db, "bookTb", id);

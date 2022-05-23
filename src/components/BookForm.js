@@ -1,5 +1,6 @@
 import { Form, Button, Alert } from 'react-bootstrap'
 import { useState } from 'react';
+import PropTypes from 'prop-types';
 const BookForm = ({ getBook }) => {
   const [year, setYear] = useState('');
   const [month, setMonth] = useState('');
@@ -81,5 +82,9 @@ const BookForm = ({ getBook }) => {
     </>
   )
 }
+
+BookForm.propTypes = {
+  getBook: PropTypes.func.isRequired
+};
 
 export default BookForm

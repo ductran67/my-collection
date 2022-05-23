@@ -2,22 +2,13 @@
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 
-// Your web app's Firebase configuration
-const firebaseConfig = {
-  apiKey: "AIzaSyAIpwexc6bVMm_Us1CTJs7t4TFzZFB6xQc",
-  authDomain: "my-collection-id.firebaseapp.com",
-  projectId: "my-collection-id",
-  storageBucket: "my-collection-id.appspot.com",
-  messagingSenderId: "969252681173",
-  appId: "1:969252681173:web:6bf9ce5df37b4cdac4f95c"
-  // apiKey: "AIzaSyChyIBjViFB0P_AVNVWgRznEt3MsLDBI5E",
-  // authDomain: "collection-id.firebaseapp.com",
-  // projectId: "collection-id",
-  // storageBucket: "collection-id.appspot.com",
-  // messagingSenderId: "917729628691",
-  // appId: "1:917729628691:web:9295eafc353707f69de5e6"
-};
+const app = initializeApp({
+  apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
+  authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.REACT_APP_FIREBASE_APP_ID
+});
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app);

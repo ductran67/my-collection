@@ -1,8 +1,8 @@
 import {Form, Button, Alert} from 'react-bootstrap'
 import { useState } from 'react';
 import quoteDataService from '../services/quote.services';
-
-const QuoteForm = ({ quotes, getQuotes }) => {
+import PropTypes from 'prop-types';
+const QuoteForm = ({ getQuotes }) => {
   const [quote, setQuote] = useState('');
   const [citation, setCitation] = useState('');
   const [message, setMessage] = useState({ error: false, msg: "" });
@@ -66,6 +66,10 @@ const QuoteForm = ({ quotes, getQuotes }) => {
       </Form>
     </>
   )
+}
+
+QuoteForm.propTypes = {
+  getQuotes: PropTypes.func.isRequired
 }
 
 export default QuoteForm;

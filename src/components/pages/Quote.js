@@ -2,7 +2,8 @@ import { Container, Row, Col } from 'react-bootstrap';
 import QuoteForm from '../QuoteForm';
 import TabularForm from '../TabularForm';
 import Button from '../layout/Button';
-const Quote = ({ quotes, getQuotes, onSelectedDelete, onDeleteAll }) => {
+import PropTypes from 'prop-types';
+const Quote = ({ quoteList, getQuotes, onSelectedDelete, onDeleteAll }) => {
   const column = [
     {name: 'checkbox', type: 'checkbox', value: '\u2713'},
     {name: 'quote', type: 'string', value: 'Quote'},
@@ -15,15 +16,15 @@ const Quote = ({ quotes, getQuotes, onSelectedDelete, onDeleteAll }) => {
       <Row>
         {/* Quote form area */}
         <Col>
-          <QuoteForm quotes={quotes} getQuotes={getQuotes} />
+          <QuoteForm getQuotes={getQuotes} />
         </Col>
         {/* Quote Tabular form area */}
         <Col xl={7}>
-          {quotes.length > 0 ? (
+          {quoteList.length > 0 ? (
             <>
               <Button text='Delete Selected Items' onClick={onSelectedDelete}/>
               <Button text='Delete All' onClick={onDeleteAll}/>
-              <TabularForm data={quotes} column={column} />
+              <TabularForm data={quoteList} column={column} />
             </>
           ) : ('')}
 
@@ -32,5 +33,12 @@ const Quote = ({ quotes, getQuotes, onSelectedDelete, onDeleteAll }) => {
     </Container>
   )
 }
+
+Quote.propTypes = {
+  quoteList: PropTypes.arrayOf(PropTypes.object).isRequired,
+  getQuotes: PropTypes.func.isRequired,
+  onSelectedDelete: PropTypes.func.isRequired,
+  onDeleteAll: PropTypes.func.isRequired
+};
 
 export default Quote;

@@ -6,7 +6,7 @@ import Button from '../layout/Button';
 import bookDataService from '../../services/book.services';
 
 const Book = () => {
-  const [data, setData] = useState([]);
+  const [bookList, setBookList] = useState([]);
   const [message, setMessage] = useState({ error: false, msg: "" });
   const column = [
     {name: 'checkbox', type: 'checkbox', value: '\u2713'},
@@ -20,7 +20,7 @@ const Book = () => {
     const res = await fetch(url);
     const books = await res.json();
     // console.log(books.results.books);
-    setData(books.results.books);
+    setBookList(books.results.books);
   }
 
   const onSelect = async () => {
@@ -28,7 +28,7 @@ const Book = () => {
     // Get all checkbox elements
     const bookCheckBox = document.getElementsByName('checkbox');
     // Filter selected items from data
-    const selectedBooks = data.filter((book, index) => bookCheckBox[index].checked);
+    const selectedBooks = bookList.filter((book, index) => bookCheckBox[index].checked);
     if (selectedBooks.length === 0) {
       setMessage({ error: true, msg: "Please select your favorite books." });
       // alert('Please select your favorite books.');
@@ -37,8 +37,8 @@ const Book = () => {
         // Get book's info
         const { title, author, book_image, description } = book;
         // check if this book already exists in bookTb or not
-        const data = await bookDataService.findBook(title, author);
-        if (data.length ===0) {
+        const exist = await bookDataService.findBook(title, author);
+        if (exist.length ===0) {
           // console.log('add new book.')
           const date = new Date().toLocaleString();
           await bookDataService.addBook({title, author, book_image, description, date});
@@ -63,7 +63,7 @@ const Book = () => {
         </Col>
         {/* Book Tabular form area */}
         <Col xl={10}>
-          {data.length > 0 ? (
+          {bookList.length > 0 ? (
             <div>
               {message?.msg && (
                 <Alert
@@ -76,7 +76,7 @@ const Book = () => {
               <Button text='Select Books' onClick={onSelect}/>
             </div>
           ) : ('')}
-          <TabularForm data={data} column={column} />
+          <TabularForm data={bookList} column={column} />
         </Col>
       </Row>
     </Container>

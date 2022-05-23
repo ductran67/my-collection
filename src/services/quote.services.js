@@ -7,9 +7,11 @@ import {
   addDoc,
   deleteDoc,
   doc,
+  orderBy
 } from "firebase/firestore";
 
 const quoteCollection = collection(db, "quoteTb");
+const quoteQuery = query(quoteCollection, orderBy("date", "desc"));
 
 class quoteDataService {
   findQuote = async (quote, citation) => {
@@ -23,7 +25,7 @@ class quoteDataService {
     return addDoc(quoteCollection, newQuote);
   };
   getAllQuotes = () => {
-    return getDocs(quoteCollection);
+    return getDocs(quoteQuery);
   };
   deleteQuote = (id) => {
     const quoteDoc = doc(db, "quoteTb", id);

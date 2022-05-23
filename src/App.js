@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react'
+/* eslint-disable react-hooks/exhaustive-deps */
+import { useState, useEffect, useCallback } from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Container } from 'react-bootstrap';
 import Header from './components/Header';
@@ -11,15 +12,17 @@ import quoteDataService from './services/quote.services';
 
 function App() {
   const [quotes, setQuotes] = useState([]);
-  
+
+  const getQuotes = useCallback(async () => {
+    const data = await quoteDataService.getAllQuotes();
+    setQuotes(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+    // console.log(quotes);
+  });
+
   useEffect(() => {
     getQuotes();
   }, []);
 
-  const getQuotes = async () => {
-    const data = await quoteDataService.getAllQuotes();
-    setQuotes(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
-  }
 
   // Delete selected quotes function
   const DeleteSelectedQuotes = async() => {
@@ -43,7 +46,6 @@ function App() {
     if (quotes.length > 0) {
       if (window.confirm('Are you sure to delete all your favorite quotes?')) {
         quotes.map(async(quote) => ({...await quoteDataService.deleteQuote(quote.id), id: quote.id}));
-        // getQuotes();
         // Empty quote array
         setQuotes([]);
       }      
@@ -55,12 +57,12 @@ function App() {
   return (
     <BrowserRouter>
       <Container fluid>
-        <Header quotes={quotes} getQuotes={getQuotes} />
+        <Header quoteCollection={quotes} />
           <NavBar />
           <Routes>
             <Route exact path='/' element=
               {<Quote
-                quotes={quotes} 
+                quoteList={quotes} 
                 getQuotes={getQuotes}
                 onSelectedDelete={DeleteSelectedQuotes}
                 onDeleteAll={DeleteAllQuotes}

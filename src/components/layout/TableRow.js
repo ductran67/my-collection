@@ -1,5 +1,6 @@
-import CheckBox from "./CheckBox"
-import Image from "./Image"
+import CheckBox from "./CheckBox";
+import Image from "./Image";
+import PropTypes from 'prop-types';
 const TableRow = ({ item, column }) => {
   return (
     <tr>
@@ -15,5 +16,10 @@ const TableRow = ({ item, column }) => {
     </tr>
   )
 }
+
+TableRow.propTypes = {
+  item: PropTypes.object.isRequired,
+  column: PropTypes.arrayOf(PropTypes.object).isRequired
+};
 
 export default TableRow
